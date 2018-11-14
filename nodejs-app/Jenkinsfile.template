@@ -1,5 +1,6 @@
 pipeline {
   agent { label 'nodejs-app' }
+  stages {
       stage('Test') {
       steps {
         container('nodejs') {
@@ -7,5 +8,6 @@ pipeline {
           sh 'node --version'
         }
       }
+    }
     }
 }
