@@ -2,7 +2,7 @@ pipeline {
 	agent none
 	stages {
 		stage('Test') {
-		agent { label 'nodejs-app' }
+			agent { label 'nodejs-app' }
 			steps {
 				container('nodejs') {
 					echo 'Hello World!'   
@@ -25,17 +25,19 @@ pipeline {
 				branch 'master'
 			}
 			options {
-				timeout(time: 5, unit: 'SECONDS') 
-			}
-			input {
-				message "Should we continue?"
+		      		timeout(time: 60, unit: 'SECONDS') 
+		      	}
+		      	input {
+				message "Should we deploy?"
+				submitter "mb95547"
+				submitterParameter "APPROVER"
 			}
 			steps {
-				echo "Continuing with deployment"
+				echo "Continuing with deployment - approved by ${APPROVER}"
 			}
 		}
-      steps {
-        echo "Continuing with deployment"
-      }
-    }		
+	steps {
+		echo "Continuing with deployment"
+	}
+	}		
 }
