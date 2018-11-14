@@ -13,17 +13,17 @@ pipeline {
 		stage('Test') {
 			agent { label 'nodejs-app' }
 			steps {
-				post {
-					success {
-						stash name: 'app', includes: '*.js, public/**, views/*, Dockerfile'
-					}
-				}
 				checkout scm
 				container('nodejs') {
 					echo 'Hello World!'   
 					sh 'node --version'
 				}
 			}
+			post {
+					success {
+						stash name: 'app', includes: '*.js, public/**, views/*, Dockerfile'
+					}
+				}
 		}
 		stage('Build and Push Image') {
 			agent any
@@ -32,14 +32,14 @@ pipeline {
 				 branch 'master'
 			}
 			steps {
-				post {
+				echo "TODO - build and push image"
+				unstash 'app'
+			}	
+			post {
 				success {
 					slackSend "${JOB_NAME} pipeline job is awaiting approval at: ${RUN_DISPLAY_URL}"
 					}
 				}
-				echo "TODO - build and push image"
-				unstash 'app'
-			}			
 		}
 		stage('Deploy') {
 			when {
