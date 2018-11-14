@@ -1,4 +1,4 @@
-library 'cd-accel'
+library 'cd-accel@completed'
 def testPodYaml = libraryResource 'podtemplates/nodejs-app/web-test-pod.yml'
 def loadTestPodYaml = libraryResource 'podtemplates/nodejs-app/load-test-pod.yml'
 pipeline {
@@ -27,23 +27,12 @@ pipeline {
 				stage('Nodejs Setup') {
 				  steps {
 					checkout scm
-					stage('Nodejs Setup') {
-						steps {
-						checkout scm
-						defineProps('.nodejs-app', [npmPackages: 'express pug'])            
-							container('nodejs') {
-								sh """
-								npm i -S ${npmPackages}
-								node ./hello.js &
-								"""
-							}
-						}   
-					}
+					defineProps('.nodejs-app', [npmPackages: 'express pug'])            
 					container('nodejs') {
-						sh """
+					  sh """
 						npm i -S ${npmPackages}
 						node ./hello.js &
-						"""
+					  """
 					}
 				  }   
 				}
@@ -96,20 +85,20 @@ pipeline {
 		  }
 		}
 		stage('Build and Push Image') {
-			agent any
-			when {
-				 beforeAgent true
-				 branch 'master'
+		  when {
+			beforeAgent true
+			branch 'master'
+		  }
+		  steps {
+			dockerBuildPush(env.IMAGE_NAME, env.IMAGE_TAG) {
+			  unstash 'app'
 			}
-			steps {
-				echo "TODO - build and push image"
-				unstash 'app'
-			}	
-			post {
-				success {
-					slackSend "${JOB_NAME} pipeline job is awaiting approval at: ${RUN_DISPLAY_URL}"
-				}
+		  }
+		  post {
+			success {
+			  slackSend "${JOB_NAME} pipeline job is awaiting approval at: ${RUN_DISPLAY_URL}"
 			}
+		  }
 		}
 		stage('Deploy') {
 			when {
