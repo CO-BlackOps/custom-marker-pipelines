@@ -26,8 +26,8 @@ pipeline {
 			}
 			options {
 		      		timeout(time: 60, unit: 'SECONDS') 
-		      	}
-		      	input {
+		    }
+		    input {
 				message "Should we deploy?"
 				submitter "mb95547"
 				submitterParameter "APPROVER"
@@ -36,8 +36,5 @@ pipeline {
 				echo "Continuing with deployment - approved by ${APPROVER}"
 			}
 		}
-	steps {
-		echo "Continuing with deployment"
-	}
 	}		
 }
